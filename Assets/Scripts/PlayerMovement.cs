@@ -10,12 +10,5 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float horiz = Input.GetAxis("Horizontal");
-        float vert = Input.GetAxis("Vertical");
-        
-        Vector3 dir = new Vector3(horiz, 0, vert);
-        dir.Normalize();
-
-        rb.velocity = transform.TransformDirection(dir) * speed * Time.fixedDeltaTime;
     }
 }
