@@ -2,13 +2,16 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public Transform player;
-    public Rigidbody rb;
-
+    public CharacterController controller;
     public float speed;
 
-
-    private void FixedUpdate()
+    private void Update()
     {
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        Vector3 vec = transform.right * x + transform.forward * z;
+
+        controller.Move(vec * speed * Time.deltaTime);
     }
 }
