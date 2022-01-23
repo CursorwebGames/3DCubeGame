@@ -231,7 +231,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 342295281}
   speed: 10
-  gravity: -20
+  gravity: -100
   groundCheck: {fileID: 1068205595}
   groundDistance: 0.4
   groundMask:
