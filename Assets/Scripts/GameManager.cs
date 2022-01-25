@@ -2,8 +2,27 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    bool isPlaying = true;
+
     private void Update()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        if (isPlaying)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isPlaying = false;
+        }
+        
+        if (Input.GetMouseButton(0)) // primary
+        {
+            isPlaying = true;
+        }
     }
 }
