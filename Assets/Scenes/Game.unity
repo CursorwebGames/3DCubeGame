@@ -352,8 +352,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 431290617}
-  xSize: 20
-  zSize: 20
+  xSize: 100
+  zSize: 100
 --- !u!64 &431290619
 MeshCollider:
   m_ObjectHideFlags: 0

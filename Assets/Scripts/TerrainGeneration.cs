@@ -6,12 +6,15 @@ public class TerrainGeneration : MonoBehaviour
 
     private void Start()
     {
+        SimplexNoiseGenerator noise = new SimplexNoiseGenerator();
+
         for (int x = 0; x < 100; x++)
         {
             for (int z = 0; z < 100; z++)
             {
                 GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.transform.position = new Vector3(x, Mathf.Floor(Mathf.PerlinNoise((float)x / 100, (float)z / 100) * 100), z);
+                float y = Mathf.Round((noise.coherentNoise(x, 0, z)) * 50);
+                cube.transform.position = new Vector3(x, y, z);
                 cube.GetComponent<MeshRenderer>().material = materials[Random.Range(0, materials.Length)];
                 cube.layer = 6;
             }
