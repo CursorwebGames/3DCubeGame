@@ -22,7 +22,8 @@ public class MeshGenerator : MonoBehaviour
 
     void CreateShape()
     {
-        SimplexNoiseGenerator noise = new SimplexNoiseGenerator();
+        FastNoiseLite noise = new FastNoiseLite();
+        noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
 
         vertices = new Vector3[(xSize + 1) * (zSize + 1)];
 
@@ -30,7 +31,7 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int x = 0; x <= xSize; x++)
             {
-                float y = Mathf.Round((noise.coherentNoise(x, 0, z)) * 50);
+                float y = Mathf.Round((noise.GetNoise(x, z)) * 50);
                 vertices[i] = new Vector3(x, y, z);
                 i++;
             }
