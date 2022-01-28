@@ -8,3 +8,4 @@ Minecraft in Unity!
 
 ## Credits
 Thanks to @NifleySnifley for creating the logo.
+Thanks to [this tutorial](https://www.youtube.com/watch?v=7OHrE2krQU8&list=PLVsTSlfj0qsWEJ-5eMtXsYp03Y9yF1dEn&index=2) for help with voxels.
