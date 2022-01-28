@@ -21,16 +21,18 @@ public class ChunkGenerator : MonoBehaviour
                 vertices.Add(VoxelData.verts[triIndex]);
                 triangles.Add(vertIndex);
 
-                uvs.Add(Vector2.zero);
+                uvs.Add(VoxelData.uvs[i]);
 
                 vertIndex++;
             }
         }
 
-        Mesh mesh = new Mesh();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.uv = uvs.ToArray();
+        Mesh mesh = new Mesh
+        {
+            vertices = vertices.ToArray(),
+            triangles = triangles.ToArray(),
+            uv = uvs.ToArray()
+        };
 
         mesh.RecalculateNormals();
 
