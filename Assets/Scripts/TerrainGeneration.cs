@@ -23,7 +23,7 @@ public class TerrainGeneration : MonoBehaviour
                 float noise1 = (noise.GetNoise(x * .3f, z * .3f) + 1) * 5;
                 float noise2 = (noise.GetNoise(x * 3f, z * 3f)) * 5 * (noise.GetNoise(x * .3f, z * .3f) + 1);
 
-                float y = Mathf.Round(noise1 + noise2);
+                float y = Mathf.Clamp(Mathf.Round(noise1 + noise2), 1, 64);
                 cube.transform.position = new Vector3(x, y, z);
                 cube.GetComponent<MeshRenderer>().material = materials[Random.Range(0, materials.Length)];
                 cube.layer = 6;
