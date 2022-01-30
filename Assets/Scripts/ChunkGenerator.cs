@@ -6,27 +6,36 @@ public class ChunkGenerator : MonoBehaviour
     public MeshRenderer meshRenderer;
     public MeshFilter meshFilter;
 
-    int vertexIndex = 0;
-    List<Vector3> vertices = new List<Vector3>();
-    List<int> triangles = new List<int>();
-    List<Vector2> uvs = new List<Vector2>();
+    private Mesh mesh;
 
-    bool[,,] voxelMap = new bool[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    private int vertexIndex = 0;
+    private readonly List<Vector3> vertices = new List<Vector3>();
+    private readonly List<int> triangles = new List<int>();
+    private readonly List<Vector2> uvs = new List<Vector2>();
+
+    // true: solid, false: air
+    private bool[,,] voxelMap = new bool[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
     void Start()
     {
+        mesh = new Mesh();
+        meshFilter.mesh = mesh;
+
+        // add the internals
         PopulateVoxelMap();
+        // render internals
         CreateMeshData();
+        // render to unity
         UpdateMesh();
     }
 
     void PopulateVoxelMap()
     {
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = 0; y < VoxelData.chunkHeight; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < VoxelData.chunkWidth; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
                     voxelMap[x, y, z] = true;
                 }
@@ -37,11 +46,11 @@ public class ChunkGenerator : MonoBehaviour
 
     void CreateMeshData()
     {
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = 0; y < VoxelData.chunkHeight; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < VoxelData.chunkWidth; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
                     AddVoxel(new Vector3(x, y, z));
                 }
@@ -56,7 +65,7 @@ public class ChunkGenerator : MonoBehaviour
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
+        if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
             return false;
 
         return voxelMap[x, y, z];
@@ -66,16 +75,45 @@ public class ChunkGenerator : MonoBehaviour
     {
         for (int p = 0; p < 6; p++)
         {
+            // only add face if its air
             if (!CheckVoxel(pos + VoxelData.faceChecks[p]))
             {
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 0]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 1]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 2]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 3]]);
-                uvs.Add(VoxelData.uvs[0]);
-                uvs.Add(VoxelData.uvs[1]);
-                uvs.Add(VoxelData.uvs[2]);
-                uvs.Add(VoxelData.uvs[3]);
+                switch (Random.Range(0, 4))
+                {
+                    case 0:
+                        // down
+                        uvs.Add(VoxelData.uvs[3]);
+                        uvs.Add(VoxelData.uvs[2]);
+                        uvs.Add(VoxelData.uvs[1]);
+                        uvs.Add(VoxelData.uvs[0]);
+                        break;
+                    case 1:
+                        // normal
+                        uvs.Add(VoxelData.uvs[0]);
+                        uvs.Add(VoxelData.uvs[1]);
+                        uvs.Add(VoxelData.uvs[2]);
+                        uvs.Add(VoxelData.uvs[3]);
+                        break;
+                    case 2:
+                        // right
+                        uvs.Add(VoxelData.uvs[0]);
+                        uvs.Add(VoxelData.uvs[2]);
+                        uvs.Add(VoxelData.uvs[1]);
+                        uvs.Add(VoxelData.uvs[3]);
+                        break;
+                    case 3:
+                        // left
+                        uvs.Add(VoxelData.uvs[3]);
+                        uvs.Add(VoxelData.uvs[1]);
+                        uvs.Add(VoxelData.uvs[2]);
+                        uvs.Add(VoxelData.uvs[0]);
+                        break;
+                }
+
                 triangles.Add(vertexIndex);
                 triangles.Add(vertexIndex + 1);
                 triangles.Add(vertexIndex + 2);
@@ -89,19 +127,19 @@ public class ChunkGenerator : MonoBehaviour
 
     void UpdateMesh()
     {
-        Mesh mesh = new Mesh
-        {
-            vertices = vertices.ToArray(),
-            triangles = triangles.ToArray(),
-            uv = uvs.ToArray()
-        };
+        mesh.Clear();
 
+        // rendering
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.uv = uvs.ToArray();
+
+        mesh.Optimize();
         mesh.RecalculateNormals();
 
-        meshFilter.mesh = mesh;
-
+        // collision
         mesh.RecalculateBounds();
-        MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
+        MeshCollider meshCollider = GetComponent<MeshCollider>();
         meshCollider.sharedMesh = mesh;
     }
 }
