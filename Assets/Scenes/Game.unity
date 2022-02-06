@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 140910738}
   - component: {fileID: 140910739}
   - component: {fileID: 140910740}
+  - component: {fileID: 140910741}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -170,6 +171,7 @@ MonoBehaviour:
   materials:
   - {fileID: 2100000, guid: 3cacf28f4068777418518a62862a8522, type: 2}
   - {fileID: 2100000, guid: 6fb207b57e763864498eef9550b3101c, type: 2}
+  - {fileID: 2100000, guid: ef79501883e764e479ffb13da5bdd290, type: 2}
   seed: {fileID: 1008265828}
 --- !u!114 &140910740
 MonoBehaviour:
@@ -183,36 +185,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18a48d5d0c56c7a439f76348641508d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &256519409
-GameObject:
+--- !u!114 &140910741
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 256519410}
-  m_Layer: 0
-  m_Name: World
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &256519410
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 256519409}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 140910737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3d2a4a395a4474ba81599c506d111e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 0}
+  blocks: []
 --- !u!1 &342295278
 GameObject:
   m_ObjectHideFlags: 0

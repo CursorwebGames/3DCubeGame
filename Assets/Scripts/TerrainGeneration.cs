@@ -18,14 +18,25 @@ public class TerrainGeneration : MonoBehaviour
         {
             for (int z = 0; z < 100; z++)
             {
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
                 float noise1 = (noise.GetNoise(x * .3f, z * .3f) + 1) * 5;
                 float noise2 = (noise.GetNoise(x * 3f, z * 3f)) * 5 * (noise.GetNoise(x * .3f, z * .3f) + 1);
 
-                float y = Mathf.Clamp(Mathf.Round(noise1 + noise2), 1, 64);
-                cube.transform.position = new Vector3(x, y, z);
-                cube.GetComponent<MeshRenderer>().material = materials[Random.Range(0, materials.Length)];
+                int height = Mathf.Clamp(Mathf.RoundToInt(noise1 + noise2), 1, 64);
+
+                GameObject cube;
+
+                for (int y = Mathf.Clamp(height - 1, 0, height); y < height; y++)
+                {
+                    cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    cube.transform.position = new Vector3(x, y, z);
+                    cube.GetComponent<MeshRenderer>().material = materials[materials.Length - 1];
+                    cube.layer = 6;
+                }
+
+                cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cube.transform.position = new Vector3(x, height, z);
+                cube.GetComponent<MeshRenderer>().material = materials[Random.Range(0, materials.Length - 1)];
                 cube.layer = 6;
             }
         }
