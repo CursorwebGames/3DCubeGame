@@ -3,8 +3,11 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
-[Ll]ogs/
 Assets/AssetStoreTools*
+
+# oopsie prevention
+[Bb]uilds.zip
+[Ll]ogs/
 
 # Visual Studio cache directory
 .vs/

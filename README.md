@@ -7,5 +7,5 @@ Minecraft in Unity!
 **Unity Version**: 2020.3.27f1
 
 ## Credits
-Thanks to @NifleySnifley for creating the logo.
+Thanks to [@NifleySnifley](https://github.com/NifleySnifley) for creating the logo.
 Thanks to [this tutorial](https://www.youtube.com/watch?v=7OHrE2krQU8&list=PLVsTSlfj0qsWEJ-5eMtXsYp03Y9yF1dEn&index=2) for help with voxels.
