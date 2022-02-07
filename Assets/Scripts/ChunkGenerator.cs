@@ -13,8 +13,9 @@ public class ChunkGenerator : MonoBehaviour
     private readonly List<int> triangles = new List<int>();
     private readonly List<Vector2> uvs = new List<Vector2>();
 
-    // true: solid, false: air
-    private bool[,,] voxelMap = new bool[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
+    public WorldManager world;
+
+    private BlockType[,,] voxelMap = new BlockType[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
     void Start()
     {
@@ -37,7 +38,7 @@ public class ChunkGenerator : MonoBehaviour
             {
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
-                    voxelMap[x, y, z] = true;
+                    voxelMap[x, y, z] = BlockType.Grass;
                 }
             }
         }
@@ -59,7 +60,7 @@ public class ChunkGenerator : MonoBehaviour
 
     }
 
-    bool CheckVoxel(Vector3 pos)
+    bool VoxelAir(Vector3 pos)
     {
         int x = Mathf.FloorToInt(pos.x);
         int y = Mathf.FloorToInt(pos.y);
@@ -68,7 +69,7 @@ public class ChunkGenerator : MonoBehaviour
         if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
             return false;
 
-        return voxelMap[x, y, z];
+        return voxelMap[x, y, z] == BlockType.Air;
     }
 
     void AddVoxel(Vector3 pos)
@@ -76,7 +77,7 @@ public class ChunkGenerator : MonoBehaviour
         for (int p = 0; p < 6; p++)
         {
             // only add face if its air
-            if (!CheckVoxel(pos + VoxelData.faceChecks[p]))
+            if (!VoxelAir(pos + VoxelData.faceChecks[p]))
             {
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 0]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 1]]);
@@ -141,5 +142,10 @@ public class ChunkGenerator : MonoBehaviour
         mesh.RecalculateBounds();
         MeshCollider meshCollider = GetComponent<MeshCollider>();
         meshCollider.sharedMesh = mesh;
+    }
+
+    void AddTexture(int textureID)
+    {
+
     }
 }
