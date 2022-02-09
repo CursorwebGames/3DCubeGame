@@ -15,9 +15,9 @@ public class ChunkGenerator : MonoBehaviour
 
     public WorldManager world;
 
-    private BlockType[,,] voxelMap = new BlockType[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
+    private bool[,,] voxelMap = new bool[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
-    void Start()
+    private void Start()
     {
         mesh = new Mesh();
         meshFilter.mesh = mesh;
@@ -30,7 +30,7 @@ public class ChunkGenerator : MonoBehaviour
         UpdateMesh();
     }
 
-    void PopulateVoxelMap()
+    private void PopulateVoxelMap()
     {
         for (int y = 0; y < VoxelData.chunkHeight; y++)
         {
@@ -38,14 +38,14 @@ public class ChunkGenerator : MonoBehaviour
             {
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
-                    voxelMap[x, y, z] = BlockType.Grass;
+                    voxelMap[x, y, z] = true;
                 }
             }
         }
 
     }
 
-    void CreateMeshData()
+    private void CreateMeshData()
     {
         for (int y = 0; y < VoxelData.chunkHeight; y++)
         {
@@ -60,7 +60,7 @@ public class ChunkGenerator : MonoBehaviour
 
     }
 
-    bool VoxelAir(Vector3 pos)
+    private bool VoxelAir(Vector3 pos)
     {
         int x = Mathf.FloorToInt(pos.x);
         int y = Mathf.FloorToInt(pos.y);
@@ -69,10 +69,10 @@ public class ChunkGenerator : MonoBehaviour
         if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
             return false;
 
-        return voxelMap[x, y, z] == BlockType.Air;
+        return voxelMap[x, y, z] == true;
     }
 
-    void AddVoxel(Vector3 pos)
+    private void AddVoxel(Vector3 pos)
     {
         for (int p = 0; p < 6; p++)
         {
@@ -126,7 +126,7 @@ public class ChunkGenerator : MonoBehaviour
         }
     }
 
-    void UpdateMesh()
+    private void UpdateMesh()
     {
         mesh.Clear();
 
@@ -144,7 +144,7 @@ public class ChunkGenerator : MonoBehaviour
         meshCollider.sharedMesh = mesh;
     }
 
-    void AddTexture(int textureID)
+    private void AddTexture(int textureID)
     {
 
     }

@@ -8,12 +8,14 @@ public class WorldManager : MonoBehaviour
 }
 
 [Serializable]
-public class Block {
+public class Block
+{
     public string name;
     public bool isSolid;
 }
 
-enum BlockType {
+enum BlockType
+{
     Air,
     Grass,
     Dirt,

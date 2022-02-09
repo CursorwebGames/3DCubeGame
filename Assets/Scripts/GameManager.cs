@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    bool isPlaying = true;
+    private bool isPlaying = true;
 
     private void Update()
     {
