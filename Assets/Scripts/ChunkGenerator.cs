@@ -15,7 +15,7 @@ public class ChunkGenerator : MonoBehaviour
 
     public WorldManager world;
 
-    private bool[,,] voxelMap = new bool[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
+    private BlockType[,,] voxelMap = new BlockType[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
     private void Start()
     {
@@ -38,7 +38,7 @@ public class ChunkGenerator : MonoBehaviour
             {
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
-                    voxelMap[x, y, z] = true;
+                    voxelMap[x, y, z] = BlockType.Dirt;
                 }
             }
         }
@@ -69,7 +69,7 @@ public class ChunkGenerator : MonoBehaviour
         if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
             return false;
 
-        return voxelMap[x, y, z] == true;
+        return voxelMap[x, y, z] != BlockType.Air;
     }
 
     private void AddVoxel(Vector3 pos)
