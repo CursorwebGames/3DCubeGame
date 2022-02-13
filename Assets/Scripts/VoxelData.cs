@@ -2,6 +2,9 @@ using UnityEngine;
 
 public static class VoxelData
 {
+    public static readonly int blockWidths = 16;
+    public static float blockRatios { get { return 1f / (float)blockWidths; } }
+
     public static readonly int chunkWidth = 16;
     public static readonly int chunkHeight = 64;
 

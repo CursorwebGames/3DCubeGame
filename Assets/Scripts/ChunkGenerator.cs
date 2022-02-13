@@ -85,7 +85,9 @@ public class ChunkGenerator : MonoBehaviour
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 1]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 2]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 3]]);
-                switch (Random.Range(0, 4))
+
+                AddTexture(2);
+                /* switch (Random.Range(0, 4))
                 {
                     case 0:
                         // down
@@ -115,7 +117,7 @@ public class ChunkGenerator : MonoBehaviour
                         uvs.Add(VoxelData.uvs[2]);
                         uvs.Add(VoxelData.uvs[0]);
                         break;
-                }
+                } */
 
                 triangles.Add(vertexIndex);
                 triangles.Add(vertexIndex + 1);
@@ -148,6 +150,17 @@ public class ChunkGenerator : MonoBehaviour
 
     private void AddTexture(int textureID)
     {
+        float y = textureID / VoxelData.blockWidths;
+        float x = textureID - (y * VoxelData.blockWidths);
 
+        x *= VoxelData.blockRatios;
+        y *= VoxelData.blockRatios;
+        
+        y = 1f - y - VoxelData.blockRatios; // start at 0
+        
+        uvs.Add(new Vector2(x, y));
+        uvs.Add(new Vector2(x, y + VoxelData.blockRatios));
+        uvs.Add(new Vector2(x + VoxelData.blockRatios, y));
+        uvs.Add(new Vector2(x + VoxelData.blockRatios, y + VoxelData.blockRatios));
     }
 }
