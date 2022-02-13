@@ -19,6 +19,8 @@ public class ChunkGenerator : MonoBehaviour
 
     private void Start()
     {
+        world = GameObject.Find("GameManager").GetComponent<WorldManager>();
+
         mesh = new Mesh();
         meshFilter.mesh = mesh;
 
@@ -67,9 +69,9 @@ public class ChunkGenerator : MonoBehaviour
         int z = Mathf.FloorToInt(pos.z);
 
         if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
-            return false;
+            return true;
 
-        return voxelMap[x, y, z] != BlockType.Air;
+        return voxelMap[x, y, z] == BlockType.Air;
     }
 
     private void AddVoxel(Vector3 pos)
@@ -77,7 +79,7 @@ public class ChunkGenerator : MonoBehaviour
         for (int p = 0; p < 6; p++)
         {
             // only add face if its air
-            if (!VoxelAir(pos + VoxelData.faceChecks[p]))
+            if (VoxelAir(pos + VoxelData.faceChecks[p]))
             {
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 0]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 1]]);

@@ -4,7 +4,6 @@ using UnityEngine;
 public class WorldManager : MonoBehaviour
 {
     public Material material;
-    public Block[] blocks;
 }
 
 [Serializable]
