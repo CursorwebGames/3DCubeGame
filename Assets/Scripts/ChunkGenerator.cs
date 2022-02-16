@@ -87,37 +87,6 @@ public class ChunkGenerator : MonoBehaviour
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 3]]);
 
                 AddTexture(2);
-                /* switch (Random.Range(0, 4))
-                {
-                    case 0:
-                        // down
-                        uvs.Add(VoxelData.uvs[3]);
-                        uvs.Add(VoxelData.uvs[2]);
-                        uvs.Add(VoxelData.uvs[1]);
-                        uvs.Add(VoxelData.uvs[0]);
-                        break;
-                    case 1:
-                        // normal
-                        uvs.Add(VoxelData.uvs[0]);
-                        uvs.Add(VoxelData.uvs[1]);
-                        uvs.Add(VoxelData.uvs[2]);
-                        uvs.Add(VoxelData.uvs[3]);
-                        break;
-                    case 2:
-                        // right
-                        uvs.Add(VoxelData.uvs[0]);
-                        uvs.Add(VoxelData.uvs[2]);
-                        uvs.Add(VoxelData.uvs[1]);
-                        uvs.Add(VoxelData.uvs[3]);
-                        break;
-                    case 3:
-                        // left
-                        uvs.Add(VoxelData.uvs[3]);
-                        uvs.Add(VoxelData.uvs[1]);
-                        uvs.Add(VoxelData.uvs[2]);
-                        uvs.Add(VoxelData.uvs[0]);
-                        break;
-                } */
 
                 triangles.Add(vertexIndex);
                 triangles.Add(vertexIndex + 1);
@@ -148,8 +117,10 @@ public class ChunkGenerator : MonoBehaviour
         meshCollider.sharedMesh = mesh;
     }
 
-    private void AddTexture(int textureID)
+    private void AddTexture(int textureID, bool random = true)
     {
+        int orientation = random ? Random.Range(0, 4) : 1;
+
         float y = textureID / VoxelData.blockWidths;
         float x = textureID - (y * VoxelData.blockWidths);
 
@@ -157,10 +128,37 @@ public class ChunkGenerator : MonoBehaviour
         y *= VoxelData.blockRatios;
         
         y = 1f - y - VoxelData.blockRatios; // start at 0
-        
-        uvs.Add(new Vector2(x, y));
-        uvs.Add(new Vector2(x, y + VoxelData.blockRatios));
-        uvs.Add(new Vector2(x + VoxelData.blockRatios, y));
-        uvs.Add(new Vector2(x + VoxelData.blockRatios, y + VoxelData.blockRatios));
+
+        switch (orientation)
+        {
+            case 0:
+                // down
+                uvs.Add(new Vector2(x + VoxelData.blockRatios, y + VoxelData.blockRatios));
+                uvs.Add(new Vector2(x + VoxelData.blockRatios, y));
+                uvs.Add(new Vector2(x, y + VoxelData.blockRatios));
+                uvs.Add(new Vector2(x, y));
+                break;
+            case 1:
+                // normal
+                uvs.Add(new Vector2(x, y));
+                uvs.Add(new Vector2(x, y + VoxelData.blockRatios));
+                uvs.Add(new Vector2(x + VoxelData.blockRatios, y));
+                uvs.Add(new Vector2(x + VoxelData.blockRatios, y + VoxelData.blockRatios));
+                break;
+            case 2:
+                // right
+                uvs.Add(new Vector2(x, y));
+                uvs.Add(new Vector2(x + VoxelData.blockRatios, y));
+                uvs.Add(new Vector2(x, y + VoxelData.blockRatios));
+                uvs.Add(new Vector2(x + VoxelData.blockRatios, y + VoxelData.blockRatios));
+                break;
+            case 3:
+                // left
+                uvs.Add(new Vector2(x + VoxelData.blockRatios, y + VoxelData.blockRatios));
+                uvs.Add(new Vector2(x, y + VoxelData.blockRatios));
+                uvs.Add(new Vector2(x + VoxelData.blockRatios, y));
+                uvs.Add(new Vector2(x, y));
+                break;
+        }
     }
 }
