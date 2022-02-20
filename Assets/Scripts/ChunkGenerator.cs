@@ -40,7 +40,22 @@ public class ChunkGenerator : MonoBehaviour
             {
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
-                    voxelMap[x, y, z] = BlockType.Grass;
+                    if (y > 3)
+                    {
+                        voxelMap[x, y, z] = BlockType.Air;
+                    }
+                    else if (y == 3)
+                    {
+                        voxelMap[x, y, z] = BlockType.Grass;
+                    }
+                    else if (y > 0 && y < 3)
+                    {
+                        voxelMap[x, y, z] = BlockType.Dirt;
+                    }
+                    else
+                    {
+                        voxelMap[x, y, z] = BlockType.Bedrock;
+                    }
                 }
             }
         }
@@ -71,7 +86,7 @@ public class ChunkGenerator : MonoBehaviour
         if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
             return true;
 
-        return world.blockData[voxelMap[x, y, z]].isSolid;
+        return voxelMap[x, y, z] == BlockType.Air ? true : !world.blockData[voxelMap[x, y, z]].isSolid;
     }
 
     private void AddVoxel(Vector3 pos)
@@ -82,13 +97,14 @@ public class ChunkGenerator : MonoBehaviour
             if (VoxelAir(pos + VoxelData.faceChecks[p]))
             {
                 BlockType blockType = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
+                if (blockType == BlockType.Air) continue;
 
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 0]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 1]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 2]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 3]]);
 
-                AddTexture(world.blockData[blockType].textureIds[p]);
+                AddTexture(world.blockData[blockType].textureIds[p], false);
 
                 triangles.Add(vertexIndex);
                 triangles.Add(vertexIndex + 1);
@@ -128,7 +144,7 @@ public class ChunkGenerator : MonoBehaviour
 
         x *= VoxelData.blockRatios;
         y *= VoxelData.blockRatios;
-        
+
         y = 1f - y - VoxelData.blockRatios; // start at 0
 
         switch (orientation)

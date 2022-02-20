@@ -7,9 +7,10 @@ public class WorldManager : MonoBehaviour
 {
     public Material material;
     public Dictionary<BlockType, BlockInfo> blockData = new Dictionary<BlockType, BlockInfo>() {
-        { BlockType.Grass, new BlockInfo("Grass Block", false, new int[] { 1, 1, 2, 0, 1, 1 }) },
-        { BlockType.Dirt, new BlockInfo("Dirt", false, 0) },
-        { BlockType.Stone, new BlockInfo("Stone", false, 3) }
+        { BlockType.Grass, new BlockInfo("Grass Block", new int[] { 1, 1, 2, 0, 1, 1 }) },
+        { BlockType.Dirt, new BlockInfo("Dirt", 0) },
+        { BlockType.Stone, new BlockInfo("Stone", 3) },
+        { BlockType.Bedrock, new BlockInfo("Bedrock", 4) }
     };
 }
 
@@ -23,17 +24,17 @@ public class BlockInfo
     public int[] textureIds = new int[6];
 
     /// <summary>back front top bottom left right</summary>
-    public BlockInfo(string name, bool isSolid, int[] textureIds)
+    public BlockInfo(string name, int[] textureIds, bool solid = true)
     {
         this.name = name;
-        this.isSolid = isSolid;
+        this.isSolid = solid;
         this.textureIds = textureIds;
     }
 
-    public BlockInfo(string name, bool isSolid, int textureId)
+    public BlockInfo(string name, int textureId, bool solid = true)
     {
         this.name = name;
-        this.isSolid = isSolid;
+        this.isSolid = solid;
 
         int[] textureIds = new int[6];
         for (int i = 0; i < 6; i++)
@@ -51,5 +52,6 @@ public enum BlockType
     Air,
     Grass,
     Dirt,
-    Stone
+    Stone,
+    Bedrock
 }
