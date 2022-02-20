@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour
 {
+    int seedNum;
+    FastNoiseLite noise;
+
     public MeshRenderer meshRenderer;
     public MeshFilter meshFilter;
 
@@ -19,6 +22,10 @@ public class ChunkGenerator : MonoBehaviour
 
     private void Start()
     {
+        seedNum = Random.Range(0, 10_000);
+        noise = new FastNoiseLite(seedNum);
+        noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+
         world = GameObject.Find("GameManager").GetComponent<WorldManager>();
 
         mesh = new Mesh();
@@ -40,26 +47,39 @@ public class ChunkGenerator : MonoBehaviour
             {
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
-                    if (y > 3)
+                    if (y == 0)
                     {
-                        voxelMap[x, y, z] = BlockType.Air;
-                    }
-                    else if (y == 3)
-                    {
-                        voxelMap[x, y, z] = BlockType.Grass;
-                    }
-                    else if (y > 0 && y < 3)
-                    {
-                        voxelMap[x, y, z] = BlockType.Dirt;
+                        voxelMap[x, y, z] = BlockType.Bedrock;
                     }
                     else
                     {
-                        voxelMap[x, y, z] = BlockType.Bedrock;
+                        int height = terrainHeight(x, z);
+                        if (y > height)
+                        {
+                            voxelMap[x, y, z] = BlockType.Air;
+                        }
+                        else if (y == height)
+                        {
+                            voxelMap[x, y, z] = BlockType.Grass;
+                        }
+                        else if (y < height)
+                        {
+                            voxelMap[x, y, z] = BlockType.Stone;
+                        }
                     }
                 }
             }
         }
 
+    }
+
+    private int terrainHeight(int x, int z)
+    {
+        float noise1 = (noise.GetNoise(x * .3f, z * .3f) + 1) * 5;
+        float noise2 = (noise.GetNoise(x * 3f, z * 3f)) * 5 * (noise.GetNoise(x * .3f, z * .3f) + 1);
+
+        int height = Mathf.Clamp(Mathf.RoundToInt(noise1 + noise2), 1, VoxelData.chunkHeight);
+        return height;
     }
 
     private void CreateMeshData()
