@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChunkGenerator : MonoBehaviour
+public class ChunkGenerator
 {
-    int seedNum;
-    FastNoiseLite noise;
+    private GameObject chunk;
+    private ChunkPos chunkPos;
 
-    public MeshRenderer meshRenderer;
-    public MeshFilter meshFilter;
+    private int seedNum;
+    private FastNoiseLite noise;
+
+    private MeshRenderer meshRenderer;
+    private MeshCollider meshCollider;
+    private MeshFilter meshFilter;
 
     private Mesh mesh;
 
@@ -16,17 +20,26 @@ public class ChunkGenerator : MonoBehaviour
     private readonly List<int> triangles = new List<int>();
     private readonly List<Vector2> uvs = new List<Vector2>();
 
-    public WorldManager world;
-
+    private WorldManager world;
     private BlockType[,,] voxelMap = new BlockType[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
-    private void Start()
-    {
-        seedNum = Random.Range(0, 10_000);
-        noise = new FastNoiseLite(seedNum);
-        noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
 
-        world = GameObject.Find("GameManager").GetComponent<WorldManager>();
+    public ChunkGenerator(WorldManager world, FastNoiseLite noise, ChunkPos pos)
+    {
+        this.noise = noise;
+        this.world = world;
+        this.chunkPos = pos;
+
+        chunk = new GameObject($"Chunk({pos.x}, {pos.z})");
+        chunk.layer = 6; // ground layer
+
+        meshFilter = chunk.AddComponent<MeshFilter>();
+        meshCollider = chunk.AddComponent<MeshCollider>();
+        meshRenderer = chunk.AddComponent<MeshRenderer>();
+
+        meshRenderer.material = world.material;
+        chunk.transform.SetParent(world.transform);
+        chunk.transform.position = new Vector3(pos.x * 16, 0, pos.z * 16);
 
         mesh = new Mesh();
         meshFilter.mesh = mesh;
@@ -38,6 +51,7 @@ public class ChunkGenerator : MonoBehaviour
         // render to unity
         UpdateMesh();
     }
+
 
     private void PopulateVoxelMap()
     {
@@ -73,8 +87,10 @@ public class ChunkGenerator : MonoBehaviour
 
     }
 
-    private int terrainHeight(int x, int z)
+    private int terrainHeight(int xpos, int zpos)
     {
+        int x = chunkPos.x * 16 + xpos;
+        int z = chunkPos.z * 16 + zpos;
         float noise1 = (noise.GetNoise(x * .3f, z * .3f) + 1) * 5;
         float noise2 = (noise.GetNoise(x * 3f, z * 3f)) * 5 * (noise.GetNoise(x * .3f, z * .3f) + 1);
 
@@ -151,7 +167,6 @@ public class ChunkGenerator : MonoBehaviour
 
         // collision
         mesh.RecalculateBounds();
-        MeshCollider meshCollider = GetComponent<MeshCollider>();
         meshCollider.sharedMesh = mesh;
     }
 
