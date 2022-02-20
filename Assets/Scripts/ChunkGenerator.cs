@@ -40,7 +40,7 @@ public class ChunkGenerator : MonoBehaviour
             {
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
-                    voxelMap[x, y, z] = BlockType.Dirt;
+                    voxelMap[x, y, z] = BlockType.Grass;
                 }
             }
         }
@@ -71,7 +71,7 @@ public class ChunkGenerator : MonoBehaviour
         if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
             return true;
 
-        return voxelMap[x, y, z] == BlockType.Air;
+        return world.blockData[voxelMap[x, y, z]].isSolid;
     }
 
     private void AddVoxel(Vector3 pos)
@@ -81,12 +81,14 @@ public class ChunkGenerator : MonoBehaviour
             // only add face if its air
             if (VoxelAir(pos + VoxelData.faceChecks[p]))
             {
+                BlockType blockType = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
+
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 0]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 1]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 2]]);
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 3]]);
 
-                AddTexture(2);
+                AddTexture(world.blockData[blockType].textureIds[p]);
 
                 triangles.Add(vertexIndex);
                 triangles.Add(vertexIndex + 1);

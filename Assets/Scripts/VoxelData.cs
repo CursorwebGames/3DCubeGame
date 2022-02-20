@@ -28,6 +28,7 @@ public static class VoxelData
         new Vector3(1, 0, 0),
     };
 
+    // back front top bottom left right
     public static readonly int[,] tris = new int[6, 4] {
         { 0, 3, 1, 2 }, // Back Face
 		{ 5, 6, 4, 7 }, // Front Face
