@@ -7,27 +7,52 @@ using Random = UnityEngine.Random;
 public class WorldManager : MonoBehaviour
 {
     private int seedNum;
-    private FastNoiseLite noise;
+    private TerrainGenerator generator;
 
     public Material material;
+
+
+    // block infos
     public Dictionary<BlockType, BlockInfo> blockData = new Dictionary<BlockType, BlockInfo>() {
         { BlockType.Grass, new BlockInfo("Grass Block", new int[] { 1, 1, 2, 0, 1, 1 }) },
         { BlockType.Dirt, new BlockInfo("Dirt", 0) },
         { BlockType.Stone, new BlockInfo("Stone", 3) },
-        { BlockType.Bedrock, new BlockInfo("Bedrock", 4) }
+        { BlockType.Bedrock, new BlockInfo("Bedrock", 4) },
+        { BlockType.Glass, new BlockInfo("Glass", 5) }
     };
 
+    public bool isSolid(BlockType type) {
+        if (type == BlockType.Air) return false;
+        return blockData[type].isSolid;
+    }
+
+
+    // world container
+    ChunkGenerator[,] worldMap = new ChunkGenerator[8, 8];
+
+    public BlockType GetBlock(int x, int y, int z) {
+        return generator.GetBlock(x, y, z);
+    }
+
+
+    // chunk gen
     private void Start()
     {
         seedNum = Random.Range(0, 10_000);
-        noise = new FastNoiseLite(seedNum);
-        for (int x = -4; x < 4; x++)
+        generator = new TerrainGenerator(seedNum);
+
+        for (int x = 0; x < 8; x++)
         {
-            for (int z = -4; z < 4; z++)
+            for (int z = 0; z < 8; z++)
             {
-                ChunkGenerator newChunk = new ChunkGenerator(this, noise, new ChunkPos(x, z));
+                NewChunk(x, z);
             }
         }
+    }
+
+    private void NewChunk(int x, int z)
+    {
+        worldMap[x, z] = new ChunkGenerator(this, new ChunkPos(x, z));
     }
 }
 
@@ -74,6 +99,14 @@ public struct ChunkPos
         this.x = x;
         this.z = z;
     }
+
+    public int AbsX(int x) {
+        return this.x * 16 + x;
+    }
+
+    public int AbsZ(int z) {
+        return this.z * 16 + z;
+    }
 }
 
 [Serializable]
@@ -83,5 +116,6 @@ public enum BlockType
     Grass,
     Dirt,
     Stone,
-    Bedrock
+    Bedrock,
+    Glass
 }

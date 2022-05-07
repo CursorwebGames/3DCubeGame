@@ -4,7 +4,7 @@
 Minecraft in Unity!
 
 ## Spec
-**Unity Version**: 2020.3.27f1
+**Unity Version**: 2021.3.2f1
 
 ## Credits
 Thanks to [@NifleySnifley](https://github.com/NifleySnifley) for creating the logo.

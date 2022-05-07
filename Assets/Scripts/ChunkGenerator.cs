@@ -6,9 +6,6 @@ public class ChunkGenerator
     private GameObject chunk;
     private ChunkPos chunkPos;
 
-    private int seedNum;
-    private FastNoiseLite noise;
-
     private MeshRenderer meshRenderer;
     private MeshCollider meshCollider;
     private MeshFilter meshFilter;
@@ -24,9 +21,8 @@ public class ChunkGenerator
     private BlockType[,,] voxelMap = new BlockType[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
 
-    public ChunkGenerator(WorldManager world, FastNoiseLite noise, ChunkPos pos)
+    public ChunkGenerator(WorldManager world, ChunkPos pos)
     {
-        this.noise = noise;
         this.world = world;
         this.chunkPos = pos;
 
@@ -61,13 +57,21 @@ public class ChunkGenerator
             {
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
+                    voxelMap[x, y, z] = world.GetBlock(chunkPos.AbsX(x), y, chunkPos.AbsZ(z));
+                    // if (y == 0) 
+                    // {
+                    //     voxelMap[x, y, z] = BlockType.Bedrock;
+                    // } else {
+                    //     voxelMap[x, y, z] = BlockType.Air;
+                    // }
+                    /*
                     if (y == 0)
                     {
                         voxelMap[x, y, z] = BlockType.Bedrock;
                     }
                     else
                     {
-                        int height = terrainHeight(x, z);
+                        int height = TerrainHeight(x, z);
                         if (y > height)
                         {
                             voxelMap[x, y, z] = BlockType.Air;
@@ -81,21 +85,11 @@ public class ChunkGenerator
                             voxelMap[x, y, z] = BlockType.Stone;
                         }
                     }
+                    */
                 }
             }
         }
 
-    }
-
-    private int terrainHeight(int xpos, int zpos)
-    {
-        int x = chunkPos.x * 16 + xpos;
-        int z = chunkPos.z * 16 + zpos;
-        float noise1 = (noise.GetNoise(x * .3f, z * .3f) + 1) * 5;
-        float noise2 = (noise.GetNoise(x * 3f, z * 3f)) * 5 * (noise.GetNoise(x * .3f, z * .3f) + 1);
-
-        int height = Mathf.Clamp(Mathf.RoundToInt(noise1 + noise2), 1, VoxelData.chunkHeight);
-        return height;
     }
 
     private void CreateMeshData()
@@ -119,20 +113,32 @@ public class ChunkGenerator
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
-            return true;
+        // if (!VoxelInChunk((int)pos.x, (int)pos.y, (int)pos.z))
+        return !world.isSolid(world.GetBlock(chunkPos.AbsX(x), (int)pos.y, chunkPos.AbsZ(z)));
 
-        return voxelMap[x, y, z] == BlockType.Air ? true : !world.blockData[voxelMap[x, y, z]].isSolid;
+        /* if (voxelMap[x, y, z] == BlockType.Air)
+        {
+            return true;
+        }
+        else
+        {
+            return !world.blockData[voxelMap[x, y, z]].isSolid;
+        } */
+    }
+
+    private bool VoxelInChunk(int x, int y, int z)
+    {
+        return !(x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1);
     }
 
     private void AddVoxel(Vector3 pos)
     {
+        BlockType blockType = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
         for (int p = 0; p < 6; p++)
         {
             // only add face if its air
             if (VoxelAir(pos + VoxelData.faceChecks[p]))
             {
-                BlockType blockType = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
                 if (blockType == BlockType.Air) continue;
 
                 vertices.Add(pos + VoxelData.verts[VoxelData.tris[p, 0]]);
