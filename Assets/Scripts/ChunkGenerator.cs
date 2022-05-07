@@ -58,34 +58,6 @@ public class ChunkGenerator
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
                     voxelMap[x, y, z] = world.GetBlock(chunkPos.AbsX(x), y, chunkPos.AbsZ(z));
-                    // if (y == 0) 
-                    // {
-                    //     voxelMap[x, y, z] = BlockType.Bedrock;
-                    // } else {
-                    //     voxelMap[x, y, z] = BlockType.Air;
-                    // }
-                    /*
-                    if (y == 0)
-                    {
-                        voxelMap[x, y, z] = BlockType.Bedrock;
-                    }
-                    else
-                    {
-                        int height = TerrainHeight(x, z);
-                        if (y > height)
-                        {
-                            voxelMap[x, y, z] = BlockType.Air;
-                        }
-                        else if (y == height)
-                        {
-                            voxelMap[x, y, z] = BlockType.Grass;
-                        }
-                        else if (y < height)
-                        {
-                            voxelMap[x, y, z] = BlockType.Stone;
-                        }
-                    }
-                    */
                 }
             }
         }
@@ -113,17 +85,7 @@ public class ChunkGenerator
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        // if (!VoxelInChunk((int)pos.x, (int)pos.y, (int)pos.z))
         return !world.isSolid(world.GetBlock(chunkPos.AbsX(x), (int)pos.y, chunkPos.AbsZ(z)));
-
-        /* if (voxelMap[x, y, z] == BlockType.Air)
-        {
-            return true;
-        }
-        else
-        {
-            return !world.blockData[voxelMap[x, y, z]].isSolid;
-        } */
     }
 
     private bool VoxelInChunk(int x, int y, int z)

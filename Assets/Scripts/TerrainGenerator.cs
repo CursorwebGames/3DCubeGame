@@ -11,10 +11,6 @@ public class TerrainGenerator {
 
     public BlockType GetBlock(int x, int y, int z)
     {
-        // if (y == 0) return BlockType.Bedrock;
-        // if (y == 1) return BlockType.Stone;
-        // if (y == 5 && Random.Range(0, 5) < 3) return BlockType.Dirt;
-        // return BlockType.Air;
         if (y == 0)
         {
             return BlockType.Bedrock;
