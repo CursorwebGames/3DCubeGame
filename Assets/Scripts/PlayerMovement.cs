@@ -5,8 +5,9 @@ public class PlayerMovement : MonoBehaviour
     public CharacterController controller;
     public float speed;
 
-    bool isGrounded;
-    Vector3 velocity;
+    private bool isGrounded;
+    private Vector3 velocity;
+    
     public float gravity;
     public float jumpHeight;
 

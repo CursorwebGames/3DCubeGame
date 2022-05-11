@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ChunkGenerator
 {
-    private GameObject chunk;
+    public GameObject chunk;
     private ChunkPos chunkPos;
 
     private MeshRenderer meshRenderer;

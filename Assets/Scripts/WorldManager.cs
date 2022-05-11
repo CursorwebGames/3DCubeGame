@@ -9,6 +9,8 @@ public class WorldManager : MonoBehaviour
     private int seedNum;
     private TerrainGenerator generator;
 
+    public Transform player;
+
     public Material material;
 
 
@@ -28,7 +30,7 @@ public class WorldManager : MonoBehaviour
 
 
     // world container
-    ChunkGenerator[,] worldMap = new ChunkGenerator[8, 8];
+    private Dictionary<ChunkPos, ChunkGenerator> worldMap = new Dictionary<ChunkPos, ChunkGenerator>();
 
     public BlockType GetBlock(int x, int y, int z) {
         return generator.GetBlock(x, y, z);
@@ -40,19 +42,24 @@ public class WorldManager : MonoBehaviour
     {
         seedNum = Random.Range(0, 10_000);
         generator = new TerrainGenerator(seedNum);
-
-        for (int x = 0; x < 8; x++)
-        {
-            for (int z = 0; z < 8; z++)
-            {
-                NewChunk(x, z);
-            }
-        }
+        
+        GenChunk();
     }
 
     private void NewChunk(int x, int z)
     {
-        worldMap[x, z] = new ChunkGenerator(this, new ChunkPos(x, z));
+        worldMap[new ChunkPos(x, z)] = new ChunkGenerator(this, new ChunkPos(x, z));
+    }
+
+    private void GenChunk() {
+        int x = (int)player.transform.position.x;
+        int z = (int)player.transform.position.z;
+        ChunkPos pos = new ChunkPos(x, z);
+
+        if (worldMap.ContainsKey(pos)) {
+            ChunkGenerator chunk = worldMap[pos];
+            chunk.chunk.SetActive(true);
+        }
     }
 }
 
