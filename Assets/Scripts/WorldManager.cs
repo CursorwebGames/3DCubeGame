@@ -23,7 +23,8 @@ public class WorldManager : MonoBehaviour
         { BlockType.Glass, new BlockInfo("Glass", 5) }
     };
 
-    public bool isSolid(BlockType type) {
+    public bool isSolid(BlockType type)
+    {
         if (type == BlockType.Air) return false;
         return blockData[type].isSolid;
     }
@@ -31,8 +32,10 @@ public class WorldManager : MonoBehaviour
 
     // world container
     private Dictionary<ChunkPos, ChunkGenerator> worldMap = new Dictionary<ChunkPos, ChunkGenerator>();
+    private List<ChunkPos> loadedChunks = new List<ChunkPos>();
 
-    public BlockType GetBlock(int x, int y, int z) {
+    public BlockType GetBlock(int x, int y, int z)
+    {
         return generator.GetBlock(x, y, z);
     }
 
@@ -42,23 +45,77 @@ public class WorldManager : MonoBehaviour
     {
         seedNum = Random.Range(0, 10_000);
         generator = new TerrainGenerator(seedNum);
-        
-        GenChunk();
+
+        GenWorld();
+    }
+
+    private void Update()
+    {
+        GenChunks();
     }
 
     private void NewChunk(int x, int z)
     {
-        worldMap[new ChunkPos(x, z)] = new ChunkGenerator(this, new ChunkPos(x, z));
+        ChunkPos pos = new ChunkPos(x, z);
+        worldMap[pos] = new ChunkGenerator(this, pos);
+        loadedChunks.Add(pos);
     }
 
-    private void GenChunk() {
-        int x = (int)player.transform.position.x;
-        int z = (int)player.transform.position.z;
-        ChunkPos pos = new ChunkPos(x, z);
+    private ChunkPos ToChunkPos(Vector3 pos)
+    {
+        int x = Mathf.FloorToInt(pos.x / VoxelData.chunkWidth);
+        int z = Mathf.FloorToInt(pos.z / VoxelData.chunkWidth);
+        return new ChunkPos(x, z);
+    }
 
-        if (worldMap.ContainsKey(pos)) {
-            ChunkGenerator chunk = worldMap[pos];
-            chunk.chunk.SetActive(true);
+    private void GenWorld()
+    {
+        ChunkPos coord = ToChunkPos(player.position);
+
+        for (int x = coord.x - VoxelData.renderDistance; x < coord.x + VoxelData.renderDistance; x++)
+        {
+            for (int z = coord.z - VoxelData.renderDistance; z < coord.z + VoxelData.renderDistance; z++)
+            {
+                NewChunk(x, z);
+            }
+        }
+    }
+
+    private void GenChunks()
+    {
+        ChunkPos coord = ToChunkPos(player.position);
+        List<ChunkPos> unload = new List<ChunkPos>(loadedChunks);
+        loadedChunks = new List<ChunkPos>();
+
+        for (int x = coord.x - VoxelData.renderDistance; x < coord.x + VoxelData.renderDistance; x++)
+        {
+            for (int z = coord.z - VoxelData.renderDistance; z < coord.z + VoxelData.renderDistance; z++)
+            {
+                ChunkPos pos = new ChunkPos(x, z);
+
+                if (worldMap.ContainsKey(pos))
+                {
+                    worldMap[pos].chunk.SetActive(true);
+                    loadedChunks.Add(pos);
+                }
+                else
+                {
+                    NewChunk(x, z); 
+                }
+
+                for (int i = 0; i < unload.Count; i++)
+                {
+                    if (unload[i].Equals(pos))
+                    {
+                        unload.RemoveAt(i);
+                    }
+                }
+            }
+        }
+
+        foreach (ChunkPos pos in unload)
+        {
+            worldMap[pos].chunk.SetActive(false);
         }
     }
 }
@@ -107,12 +164,18 @@ public struct ChunkPos
         this.z = z;
     }
 
-    public int AbsX(int x) {
+    public int AbsX(int x)
+    {
         return this.x * 16 + x;
     }
 
-    public int AbsZ(int z) {
+    public int AbsZ(int z)
+    {
         return this.z * 16 + z;
+    }
+
+    public bool Equals(ChunkPos pos) {
+        return x == pos.x && z == pos.z;
     }
 }
 
